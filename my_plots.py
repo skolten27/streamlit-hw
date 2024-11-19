@@ -10,13 +10,13 @@ def top_names_plot(df, year=2000, n=10, width=800, height=600, variable='count')
     #rank the male names
     male_names = year_data[year_data['sex'] == 'M']
     top_male = male_names.sort_values(variable, ascending=False).head(n)
-    top_male['sex_rank'] = range(1,n+1)
+    top_male['sex_rank'] = range(1, n + 1)
     #rank the female names
     female_names = year_data[year_data['sex'] == 'F']
     top_female = female_names.sort_values(variable, ascending=False).head(n)
     top_female['sex_rank'] = range(1,n+1)
 
-    df = pd.concat[(top_male, top_female)]
+    df = pd.concat([top_male, top_female])
     df.sort_values(variable, ascending=False, inplace=True)
 
     fig = px.bar(df, x='name', y=variable, color='sex',
