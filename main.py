@@ -45,7 +45,7 @@ with st.sidebar:
     sex_input = st.selectbox("Sex", ["Male", "Female"])
 
 
-tab1, tab2, tab3 = st.tabs(['Names', 'Year', 'Trends'])
+tab1, tab2, tab3, tab4 = st.tabs(['Names', 'Year', 'Trends', 'One Hit Wonders'])
 
 with tab1: 
     name_data = data[data['name']==input_name].copy()
@@ -63,3 +63,11 @@ with tab2:
 with tab3:
     fig3 = name_trend_plot(data, name=input_name)
     st.plotly_chart(fig3)
+
+with tab4:
+    st.subheader(f"One-Hit Wonders in {year_input}")
+    ohw_result = one_hit_wonders(ohw_data, year=year_input, sex=sex_input)
+    if not ohw_result.empty:
+        st.dataframe(ohw_result)
+    else:
+        st.write(f"No one-hit wonders found for {sex_input} in {year_input}.")

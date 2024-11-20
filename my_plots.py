@@ -173,25 +173,30 @@ def unique_names_summary(df, year=1977):
     
     return output
 
-def one_hit_wonders(ohw_data, year=1977):
+def one_hit_wonders(ohw_data, year=1977, sex=None):
+    ohw_year = ohw_data[ohw_data['year'] == year]
     
-    ohw_year = ohw_data[ohw_data['year']==year]
-
+    if sex:
+        ohw_year = ohw_year[ohw_year['sex'] == sex]
+    
     if ohw_year.empty:
-        print(f"No one-hit wonders found in {year}")
+        print(f"No one-hit wonders found in {year} for sex '{sex}'")
+        return pd.DataFrame()  # Return an empty DataFrame if no data is found
     else:
         one_hit_wonder_counts = ohw_year['sex'].value_counts()
         common_one_hit_wonders = ohw_year.groupby(['name', 'sex'])['count'].sum().reset_index()
 
-        try: 
-            most_common_female = common_one_hit_wonders[common_one_hit_wonders['sex'] == 'F'].sort_values(by='count', ascending=False).iloc[0]
-            most_common_male = common_one_hit_wonders[common_one_hit_wonders['sex'] == 'M'].sort_values(by='count', ascending=False).iloc[0]
+        if sex:
+            most_common = common_one_hit_wonders.sort_values(by='count', ascending=False).iloc[0]
+            print(f"Most common {sex} one-hit wonder in {year}: {most_common['name']} with {most_common['count']} occurrences")
+        else:
+            try:
+                most_common_female = common_one_hit_wonders[common_one_hit_wonders['sex'] == 'F'].sort_values(by='count', ascending=False).iloc[0]
+                most_common_male = common_one_hit_wonders[common_one_hit_wonders['sex'] == 'M'].sort_values(by='count', ascending=False).iloc[0]
 
-            print(f"Summary of One-Hit Wonders in {year}:")
-            print(f"Number of female one-hit wonders: {one_hit_wonder_counts.get('F', 0)}")
-            print(f"Number of male one-hit wonders: {one_hit_wonder_counts.get('M', 0)}")
+                print(f"Most common female one-hit wonder: {most_common_female['name']} with {most_common_female['count']} occurrences")
+                print(f"Most common male one-hit wonder: {most_common_male['name']} with {most_common_male['count']} occurrences")
+            except:
+                print(f"Not enough data to calculate one-hit wonders by sex in {year}")
 
-            print(f"Most common female one-hit wonder: {most_common_female['name']} with {most_common_female['count']} occurrences")
-            print(f"Most common male one-hit wonder: {most_common_male['name']} with {most_common_male['count']} occurrences")
-        except:
-            print(f"Not enough data to calculate one-hit wonders by sex in {year}")
+        return ohw_year
