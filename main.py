@@ -42,9 +42,10 @@ with st.sidebar:
     input_name = st.text_input('Enter a name:', 'Mary')
     year_input = st.slider("Year", min_value=1880, max_value=2023, value=2000)
     n_names = st.radio('Number of names per sex', [3, 4, 5, 6])
+    sex_input = st.selectbox("Sex", ["Male", "Female"])
 
 
-tab1, tab2 = st.tabs(['Names', 'Year'])
+tab1, tab2, tab3 = st.tabs(['Names', 'Year', 'Trends'])
 
 with tab1: 
     name_data = data[data['name']==input_name].copy()
@@ -58,3 +59,7 @@ with tab2:
     st.write('Unique Names Table')
     output_table = unique_names_summary(data, 2000)
     st.dataframe(output_table)
+
+with tab3:
+    fig3 = name_trend_plot(data, name=input_name)
+    st.plotly_chart(fig3)
